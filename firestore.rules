@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return request.auth.token.role;
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && (getUserRole() == 'super_admin' || getUserRole() == 'Super Admin');
+    }
+    
+    function isBendahara() {
+      return isAuthenticated() && (isSuperAdmin() || getUserRole() == 'bendahara' || getUserRole() == 'Bendahara');
+    }
+    
+    function isKepsek() {
+      return isAuthenticated() && (isSuperAdmin() || getUserRole() == 'kepala_sekolah' || getUserRole() == 'Kepala Sekolah');
+    }
+    
+    function isAuditor() {
+      return isAuthenticated() && (getUserRole() == 'auditor' || getUserRole() == 'pemeriksa');
+    }
+
+    // School configuration
+    match /schools/{schoolId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    
+    // User Profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || request.auth.uid == userId;
+    }
+
+    // Students and Classes
+    match /students/{studentId} {
+      allow read: if isAuthenticated();
+      allow write: if isBendahara();
+    }
+    
+    match /classes/{classId} {
+      allow read: if isAuthenticated();
+      allow write: if isBendahara();
+    }
+    
+    // Invoices
+    match /invoices/{invoiceId} {
+      allow read: if isAuthenticated();
+      allow write: if isBendahara();
+    }
+
+    // Payments (No hard delete allowed for audit trail)
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated();
+      allow create: if isBendahara() || isAuthenticated();
+      allow update: if isBendahara();
+      allow delete: if false; // Immutable for accounting safety
+    }
+    
+    // Income Transactions
+    match /incomeTransactions/{incomeId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isBendahara();
+      allow delete: if false;
+    }
+
+    // Expense Transactions
+    match /expenseTransactions/{expenseId} {
+      allow read: if isAuthenticated();
+      allow create: if isBendahara();
+      allow update: if isBendahara() || isKepsek();
+      allow delete: if false;
+    }
+
+    // Cash Accounts & Transfers
+    match /cashAccounts/{accountId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || isBendahara();
+    }
+    
+    match /transfers/{transferId} {
+      allow read: if isAuthenticated();
+      allow create: if isBendahara();
+      allow update, delete: if false;
+    }
+
+    // Reconciliations & Audit Logs
+    match /reconciliations/{recId} {
+      allow read: if isAuthenticated();
+      allow create: if isBendahara() || isKepsek() || isAuditor();
+      allow update, delete: if false;
+    }
+    
+    match /auditLogs/{logId} {
+      allow read: if isSuperAdmin() || isAuditor() || isKepsek();
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+    
+    // Period Closings
+    match /periodClosings/{closingId} {
+      allow read: if isAuthenticated();
+      allow create: if isKepsek() || isSuperAdmin();
+      allow update, delete: if false; // Locked once closed
+    }
+  }
+}
