@@ -8,13 +8,15 @@ import {
   Globe,
   CheckCircle2,
   AlertTriangle,
-  Key
+  Key,
+  Trash2,
+  Sparkles
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { isFirebaseConfigured, getFirebaseConfig } from '../services/firebase';
 
 export default function SchoolSettings() {
-  const { school, setSchool, resetToDefault, logAudit, showToast } = useApp();
+  const { school, setSchool, resetToZero, logAudit, showToast } = useApp();
 
   const [formData, setFormData] = useState({ ...school });
   const [firebaseConfig, setFirebaseConfig] = useState(() => getFirebaseConfig());
@@ -47,11 +49,12 @@ export default function SchoolSettings() {
         </div>
 
         <button
-          onClick={resetToDefault}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl text-xs font-bold transition"
+          onClick={resetToZero}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-md shadow-rose-500/25 transition active:scale-95"
+          title="Hapus seluruh data transaksi, siswa, dan kas agar mulai dari NOL"
         >
-          <RotateCcw className="w-4 h-4" />
-          <span>Reset Data Demo</span>
+          <Trash2 className="w-4 h-4" />
+          <span>KOSONGKAN DATA (SET KE NOL)</span>
         </button>
       </div>
 

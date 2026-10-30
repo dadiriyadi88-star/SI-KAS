@@ -531,30 +531,32 @@ export function AppProvider({ children }) {
   };
 
   /**
-   * Reset data back to default mock
+   * Reset data back to default clean zero
    */
-  const resetToDefault = () => {
-    if (window.confirm('Apakah Anda yakin ingin mereset seluruh data kembali ke data demo awal?')) {
+  const resetToZero = () => {
+    if (window.confirm('PERINGATAN: Apakah Anda yakin ingin MENGOSONGKAN SELURUH DATA menjadi NOL untuk memulai pengisian data nyata sekolah Anda?')) {
       localStorage.clear();
       setSchool(initialSchoolData);
       setAccounts(initialAccounts);
       setCategories(initialCategories);
-      setClasses(initialClasses);
-      setFeeTypes(initialFeeTypes);
-      setStudents(initialStudents);
-      setInvoices(initialInvoices);
-      setPayments(initialPayments);
-      setIncomeTransactions(initialOtherIncomes);
-      setExpenseTransactions(initialExpenses);
-      setTransfers(initialTransfers);
-      setReconciliations(initialReconciliations);
+      setClasses([]);
+      setFeeTypes([]);
+      setStudents([]);
+      setInvoices([]);
+      setPayments([]);
+      setIncomeTransactions([]);
+      setExpenseTransactions([]);
+      setTransfers([]);
+      setReconciliations([]);
       setUsers(initialUsers);
       setCurrentUser(initialUsers[1]);
-      setPeriodClosings(initialPeriodClosings);
+      setPeriodClosings([]);
       setAuditLogs([]);
-      showToast('Data aplikasi berhasil direset ke kondisi default demo!');
+      showToast('Seluruh data berhasil DIKOSONGKAN (NOL)! Anda sekarang dapat mulai mengisi data sesungguhnya.');
     }
   };
+
+  const resetToDefault = resetToZero;
 
   const value = {
     // State
@@ -603,6 +605,7 @@ export function AppProvider({ children }) {
     recordReconciliation,
     generateBulkInvoices,
     logAudit,
+    resetToZero,
     resetToDefault
   };
 

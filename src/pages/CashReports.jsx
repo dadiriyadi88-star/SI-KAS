@@ -67,8 +67,10 @@ export default function CashReports() {
   const totalPeriodExpenses = useMemo(() => periodExpenses.reduce((s, e) => s + e.amount, 0), [periodExpenses]);
   const netSurplus = totalPeriodIncome - totalPeriodExpenses;
 
-  // Initial balance illustration as described in prompt
-  const initialBalance = 19500000;
+  // Initial balance calculated from accounts initial balances
+  const initialBalance = useMemo(() => {
+    return accounts.reduce((sum, a) => sum + (a.initialBalance || 0), 0);
+  }, [accounts]);
   const closingBalance = initialBalance + totalPeriodIncome - totalPeriodExpenses;
 
   const handlePrint = () => {

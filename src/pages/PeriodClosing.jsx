@@ -14,25 +14,27 @@ import { formatDate } from '../utils/dates';
 import Modal from '../components/common/Modal';
 
 export default function PeriodClosing() {
-  const { periodClosings, setPeriodClosings, totals, currentUser, school, logAudit, showToast } = useApp();
+  const { periodClosings, setPeriodClosings, accounts, totals, currentUser, school, logAudit, showToast } = useApp();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     periodName: 'Oktober 2026',
     startDate: '2026-10-01',
     endDate: '2026-10-31',
-    notes: 'Penutupan buku kas rutin bulan Oktober telah selesai diverifikasi oleh bendahara dan kepala sekolah.'
+    notes: 'Penutupan buku kas rutin bulan berjalan telah selesai diverifikasi oleh bendahara dan kepala sekolah.'
   });
 
   const handleClosePeriod = (e) => {
     e.preventDefault();
+
+    const initialBal = accounts.reduce((sum, a) => sum + (a.initialBalance || 0), 0);
 
     const newClosing = {
       id: `close_${Date.now()}`,
       periodName: formData.periodName,
       startDate: formData.startDate,
       endDate: formData.endDate,
-      initialBalance: 19500000,
+      initialBalance: initialBal,
       totalIncome: totals.totalIncome,
       totalExpense: totals.totalExpense,
       closingBalance: totals.totalBalance,

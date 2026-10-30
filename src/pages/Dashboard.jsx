@@ -367,45 +367,54 @@ export default function Dashboard({ setCurrentTab, onQuickPayment }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {recentTransactions.map(p => (
-                <tr key={p.id} className="hover:bg-slate-50/70 transition">
-                  <td className="py-3 pl-2 font-mono font-bold text-blue-600">
-                    {p.receiptNumber}
-                  </td>
-                  <td className="py-3 text-slate-600">{formatDate(p.paymentDate, 'short')}</td>
-                  <td className="py-3 font-semibold text-slate-900">{p.studentName}</td>
-                  <td className="py-3">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
-                      {p.className}
-                    </span>
-                  </td>
-                  <td className="py-3 text-slate-600">{p.feeName}</td>
-                  <td className="py-3 capitalize text-slate-700">
-                    {p.method === 'cash' ? '💵 Tunai' : '💳 Transfer'}
-                  </td>
-                  <td className="py-3 font-bold text-slate-900 text-right">
-                    {formatRupiah(p.amount)}
-                  </td>
-                  <td className="py-3 text-center">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      p.status === 'verified'
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-amber-100 text-amber-700'
-                    }`}>
-                      {p.status === 'verified' ? 'SAH' : 'PENDING'}
-                    </span>
-                  </td>
-                  <td className="py-3 text-right pr-2">
-                    <button
-                      onClick={() => setSelectedReceiptPayment(p)}
-                      className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                      title="Lihat Kuitansi"
-                    >
-                      <Printer className="w-4 h-4" />
-                    </button>
+              {recentTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="py-10 text-center text-slate-400">
+                    <p className="font-semibold text-sm">Belum ada transaksi pembayaran kas yang tercatat.</p>
+                    <p className="text-xs text-slate-400 mt-1">Sistem saat ini bersih (NOL). Klik tombol "+ Catat Pembayaran" di atas untuk memulai transaksi pertama.</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                recentTransactions.map(p => (
+                  <tr key={p.id} className="hover:bg-slate-50/70 transition">
+                    <td className="py-3 pl-2 font-mono font-bold text-blue-600">
+                      {p.receiptNumber}
+                    </td>
+                    <td className="py-3 text-slate-600">{formatDate(p.paymentDate, 'short')}</td>
+                    <td className="py-3 font-semibold text-slate-900">{p.studentName}</td>
+                    <td className="py-3">
+                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
+                        {p.className}
+                      </span>
+                    </td>
+                    <td className="py-3 text-slate-600">{p.feeName}</td>
+                    <td className="py-3 capitalize text-slate-700">
+                      {p.method === 'cash' ? '💵 Tunai' : '💳 Transfer'}
+                    </td>
+                    <td className="py-3 font-bold text-slate-900 text-right">
+                      {formatRupiah(p.amount)}
+                    </td>
+                    <td className="py-3 text-center">
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        p.status === 'verified'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-amber-100 text-amber-700'
+                      }`}>
+                        {p.status === 'verified' ? 'SAH' : 'PENDING'}
+                      </span>
+                    </td>
+                    <td className="py-3 text-right pr-2">
+                      <button
+                        onClick={() => setSelectedReceiptPayment(p)}
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        title="Lihat Kuitansi"
+                      >
+                        <Printer className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
